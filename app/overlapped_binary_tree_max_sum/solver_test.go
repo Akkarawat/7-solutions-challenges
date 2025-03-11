@@ -62,7 +62,7 @@ func RunTestCasesForNormalSolver(t *testing.T, testCases []testCase) {
         t.Run(testCase.TestName, func(t *testing.T) {
             actual, _ := FindBTreeMaxSum(testCase.Input)
             if actual != testCase.Expected {
-                t.Errorf("expected %d, got %d", testCase.Expected, actual)
+                t.Errorf("test case [%s] fail, expected %d, got %d", testCase.TestName, testCase.Expected, actual)
             }
         })
     }
@@ -73,7 +73,7 @@ func RunTestCasesForFastSolver(t *testing.T, testCases []testCase) {
         t.Run(testCase.TestName, func(t *testing.T) {
             actual := FindFastBTreeMaxSum(testCase.Input)
             if actual != testCase.Expected {
-                t.Errorf("expected %d, got %d", testCase.Expected, actual)
+                t.Errorf("test case [%s] fail, expected %d, got %d", testCase.TestName, testCase.Expected, actual)
             }
         })
     }
