@@ -7,22 +7,18 @@ import (
 	"unicode"
 )
 
-// WordReader efficiently reads words from an io.Reader
 type WordReader struct {
 	reader *bufio.Reader
 	buffer bytes.Buffer
 }
 
-// NewWordReader initializes a WordReader with an io.Reader
 func NewWordReader(r io.Reader) *WordReader {
 	return &WordReader{
 		reader: bufio.NewReader(r),
 	}
 }
 
-// NextWord reads the next word from the stream
 func (wr *WordReader) NextWord() (string, error) {
-	// Clear buffer from previous word
 	wr.buffer.Reset()
 
 	for {
@@ -38,15 +34,19 @@ func (wr *WordReader) NextWord() (string, error) {
 			return "", err
 		}
 
-		// Check if it's a word separator (whitespace, full stop, semicolon)
-		if unicode.IsSpace(rune(b)) || b == '.' || b == ',' {
-			if wr.buffer.Len() > 0 {
-				return wr.buffer.String(), nil // Return the current word
-			}
-			continue // Skip consecutive separators
-		}
+		// Convert byte to rune for proper Unicode handling
+		r := rune(b)
 
-		// Append character to buffer
-		wr.buffer.WriteByte(b)
+		// Check if character is valid (A-Z, a-z, or '-')
+		if unicode.IsLetter(r) || r == '-' {
+			wr.buffer.WriteRune(r) // Append to current word
+		} else {
+			// If we encounter a separator and have a word, return it
+			if wr.buffer.Len() > 0 {
+				return wr.buffer.String(), nil
+			}
+			// Otherwise, skip consecutive separators
+			continue
+		}
 	}
 }
