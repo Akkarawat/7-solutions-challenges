@@ -8,19 +8,19 @@ This repo contains the solutions for [7Solution backend challenges](https://gith
 
 -   go 1.24.1
 
-For challenge 1. run the following.
+For challenge 1.
 
 ```
 go run cmd/challenge_1/main.go
 ```
 
-For challenge 2. run the following.
+For challenge 2.
 
 ```
 go run cmd/challenge_2/main.go
 ```
 
-For challenge 3. run the following.
+For challenge 3.
 
 ```
 go run cmd/challenge_3/main.go
