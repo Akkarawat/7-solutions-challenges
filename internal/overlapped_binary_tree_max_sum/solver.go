@@ -1,6 +1,6 @@
 package overlappedbinarytreemaxsum
 
-import binarytree "7-solutions-challenges/app/overlapped_binary_tree_max_sum/binary_tree"
+import binarytree "7-solutions-challenges/internal/overlapped_binary_tree_max_sum/binary_tree"
 
 func FindBTreeMaxSum (stacks [][]int) (int, error) {
     topNode, err := binarytree.FromStackedList(stacks)
