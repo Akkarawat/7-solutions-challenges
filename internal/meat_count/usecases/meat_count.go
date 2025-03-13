@@ -8,68 +8,71 @@ import (
 )
 
 type MeatCountUsecase struct {
-    meatTextService services.MeatTextService
+	meatTextService services.MeatTextService
 }
 
 func NewMeatCountUsecase(meatTextService services.MeatTextService) *MeatCountUsecase {
-    return &MeatCountUsecase{
-        meatTextService: meatTextService,
-    }
+	return &MeatCountUsecase{
+		meatTextService: meatTextService,
+	}
 }
 
 func (uc *MeatCountUsecase) GetMeatCount() (map[string]int, error) {
-    meatSets, err := uc.getMeatSets()
-    if err != nil {
-        return nil, err
-    }
-    meatCounts := make(map[string]int)
+	meatSets, err := uc.getMeatSets()
+	if err != nil {
+		return nil, err
+	}
 
-    meatAndFillerReader, err := uc.meatTextService.GetMeatText(true)
-    if err != nil {
-        return nil, err
-    }
-    defer meatAndFillerReader.Close()
-    meatAndFillerWordReader := utils.NewWordReader(meatAndFillerReader)
+	meatCounts := make(map[string]int)
 
-    for {
-        word, err := meatAndFillerWordReader.NextWord()
-        if err == io.EOF {
-            break
-        }
-        if err != nil {
-            return nil, err
-        }
-        normalizedWord := strings.ToLower(word)
+	meatAndFillerReader, err := uc.meatTextService.GetMeatText(true)
+	if err != nil {
+		return nil, err
+	}
+	defer meatAndFillerReader.Close()
 
-        // if the word is a meat, increment the count
-        if _, ok := meatSets[normalizedWord]; ok {
-            meatCounts[normalizedWord]++
-        }
-    }
-    meatAndFillerReader.Close()
-    return meatCounts, nil
+	meatAndFillerWordReader := utils.NewWordReader(meatAndFillerReader)
+
+	for {
+		word, err := meatAndFillerWordReader.NextWord()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		normalizedWord := strings.ToLower(word)
+		if _, exists := meatSets[normalizedWord]; exists {
+			meatCounts[normalizedWord]++
+		}
+	}
+
+	return meatCounts, nil
 }
 
 func (uc *MeatCountUsecase) getMeatSets() (map[string]bool, error) {
-    reader, err := uc.meatTextService.GetMeatText(false)
-    if err != nil {
-        return nil, err
-    }
-    defer reader.Close()
+	reader, err := uc.meatTextService.GetMeatText(false)
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
 
-    sets := make(map[string]bool)
-    wordReader := utils.NewWordReader(reader)
-    for {
-        word, err := wordReader.NextWord()
-        if err == io.EOF {
-            break
-        }
-        if err != nil {
-            return nil, err
-        }
-        normalizedWord := strings.ToLower(word)
-        sets[normalizedWord] = true
-    }
+	sets := make(map[string]bool)
+	wordReader := utils.NewWordReader(reader)
 
-    return sets, nil
+	for {
+		word, err := wordReader.NextWord()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		normalizedWord := strings.ToLower(word)
+		sets[normalizedWord] = true
+	}
+
+	return sets, nil
 }
