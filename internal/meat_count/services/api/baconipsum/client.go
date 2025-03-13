@@ -9,17 +9,19 @@ import (
 
 type Client struct {
 	HTTPClient *http.Client
+	BaseUrl string
 }
 
-func NewBaconipsumClient(baseURL, apiKey string) *Client {
+func NewBaconipsumClient(baseUrl string) *Client {
 	return &Client{
 		HTTPClient: &http.Client{},
+		BaseUrl: baseUrl,
 	}
 }
 
 func (c *Client) fetch(contentType ContentType, paragraphCount int) (io.ReadCloser, error) {
 
-	baseURL, err := url.Parse("https://baconipsum.com/api/")
+	baseURL, err := url.Parse(c.BaseUrl)
 	if err != nil {
 		return nil, fmt.Errorf("invalid base URL: %w", err)
 	}
